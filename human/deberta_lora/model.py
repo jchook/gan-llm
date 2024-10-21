@@ -2,6 +2,7 @@ from datasets import load_dataset
 from transformers import  AutoModelForSequenceClassification, AutoTokenizer
 from peft import TaskType, LoraConfig, get_peft_model, AutoPeftModelForSequenceClassification
 from torch.utils.data import DataLoader
+import evaluate
 
 base_dir = 'human/deberta_lora'
 data_dir = 'human/data'
@@ -54,3 +55,48 @@ def load_deberta_lora(lora_dir):
   Load a pre-trained DeBERTa LoRA model
   """
   return AutoPeftModelForSequenceClassification.from_pretrained(lora_dir)
+
+
+def load_metric():
+  return CompositeMetric(["accuracy", "f1"])
+
+class CompositeMetric():
+  def __init__(self, metric_names):
+    # Initialize the parent class with some required information
+    super().__init__()
+    # Load metrics from evaluate library
+    self.metrics = {name: evaluate.load(name) for name in metric_names}
+
+  def _info(self):
+    # This is a placeholder MetricInfo object.
+    # You can customize the description or other attributes as needed.
+    return evaluate.MetricInfo(
+        description="A composite metric for aggregating multiple metrics (e.g., accuracy, F1)",
+        citation="",
+        inputs_description="Predictions and references for multiple metrics.",
+        features=[],
+        homepage="",
+        license="",
+        codebase_urls=["https://github.com/huggingface/evaluate"],
+    )
+
+  def add_batch(self, predictions, references, **kwargs):
+    # Add batch to each metric
+    for metric in self.metrics.values():
+      metric.add_batch(predictions=predictions, references=references, **kwargs)
+
+  def compute(self):
+    # Compute all metrics and return them as a dictionary
+    results = {}
+    for name, metric in self.metrics.items():
+      if name == "f1":
+        results[name] = metric.compute(average='weighted')
+      else:
+        results[name] = metric.compute()
+    return results
+
+  def reset(self):
+    # Reset all metrics
+    for metric in self.metrics.values():
+      metric.reset()
+

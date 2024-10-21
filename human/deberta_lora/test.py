@@ -8,12 +8,12 @@ from peft import PeftModel, PeftConfig
 lora_model_dir = f"{output_dir}/lora_epoch_1"
 
 # Load the pre-trained model
-deberta_model, tokenizer = load_deberta_model()
+model, tokenizer = load_deberta_model()
 
 # Load the LoRA model
 #model = AutoPeftModel.from_pretrained(f"{output_dir}/lora_epoch_1")
 #load_peft_model(deberta_model, f"{output_dir}/lora_epoch_1")
-model = PeftModel.from_pretrained(deberta_model, lora_model_dir)
+model = PeftModel.from_pretrained(model, lora_model_dir)
 model.eval()
 
 # Compile the model
@@ -58,7 +58,6 @@ try:
         smoothed_accuracy.pop(0)
         smooth_acc = np.mean(smoothed_accuracy)
         progress_bar.set_description(f"Loss: {outputs.loss.item():.4f}, Smoothed Acc: {smooth_acc:.4f}")
-
 
 except Exception as e:
   print(f"Error occurred during evaluation: {e}")

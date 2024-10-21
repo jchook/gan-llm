@@ -8,7 +8,7 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
 from .model import batch_size, output_dir, data_dir, tokenize
 
 # Load the pre-trained model
-model = DebertaV2ForSequenceClassification.from_pretrained(f"{output_dir}/model_epoch_1")
+model = DebertaV2ForSequenceClassification.from_pretrained(f"{output_dir}/model_epoch_3")
 
 # Load the dataset and tokenize
 dataset = load_dataset('csv', data_files={'test': f'{data_dir}/test.csv'})
@@ -31,24 +31,24 @@ model.eval()
 progress_bar = tqdm(eval_dataloader, desc="Evaluating")
 
 try:
-    with torch.no_grad():
-        for batch in progress_bar:
-            labels = batch.pop("label")  # Extract the labels
-            batch = {k: v.to(device) for k, v in batch.items()}
-            labels = labels.to(device)
+  with torch.no_grad():
+    for batch in progress_bar:
+      labels = batch.pop("label")  # Extract the labels
+      batch = {k: v.to(device) for k, v in batch.items()}
+      labels = labels.to(device)
 
-            # Forward pass
-            outputs = model(**batch)
-            logits = outputs.logits
+      # Forward pass
+      outputs = model(**batch)
+      logits = outputs.logits
 
-            # Predictions and labels
-            predictions = torch.argmax(logits, dim=-1)
-            all_predictions.extend(predictions.cpu().numpy())
-            all_labels.extend(labels.cpu().numpy())
+      # Predictions and labels
+      predictions = torch.argmax(logits, dim=-1)
+      all_predictions.extend(predictions.cpu().numpy())
+      all_labels.extend(labels.cpu().numpy())
 
 except Exception as e:
-    print(f"Error occurred during evaluation: {e}")
-    torch.cuda.empty_cache()  # Free up VRAM if an error occurs
+  print(f"Error occurred during evaluation: {e}")
+  torch.cuda.empty_cache()  # Free up VRAM if an error occurs
 
 # Compute evaluation metrics
 accuracy = accuracy_score(all_labels, all_predictions)
