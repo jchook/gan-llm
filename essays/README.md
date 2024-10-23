@@ -2,7 +2,18 @@
 
 The idea is to write a classifier that can tell if a student's essay was written by AI.
 
-## Essay data sources
+## Dataset data sources
+
+- https://www.kaggle.com/datasets/shanegerami/ai-vs-human-text
+
+To download, use the `kaggle` cli tool.
+
+```sh
+kaggle d download shanegerami/ai-vs-human-text
+```
+
+
+## Competition data sources
 
 - https://www.kaggle.com/competitions/learning-agency-lab-automated-essay-scoring-2/data
 - https://www.kaggle.com/competitions/asap-aes/data
@@ -18,6 +29,8 @@ dtrx *.zip
 # Note we use dtrx because it will unzip them into a folder named after the zip file.
 # So the path will look like this:
 # datasets/
+# ├── ai-vs-human-text/
+# │   ├── AI_Human.csv
 # ├── asap-aes/
 # │   ├── Essay_Set_Descriptions.zip
 # │   ├── test_set.tsv
@@ -33,7 +46,6 @@ dtrx *.zip
 # │   ├── valid_set.xls
 # │   └── valid_set.xlsx
 # └── learning-agency-lab-automated-essay-scoring-2/
-#     ├── learning-agency-lab-automated-essay-scoring-2.zip
 #     ├── README.md
 #     ├── sample_submission.csv
 #     ├── test.csv

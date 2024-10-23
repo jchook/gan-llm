@@ -1,14 +1,10 @@
 import torch
 from torch.optim import AdamW
 from peft import (
-    get_peft_config,
     get_peft_model,
     LoraConfig,
     TaskType,
-    PeftType,
 )
-
-import evaluate
 from transformers import get_linear_schedule_with_warmup
 from tqdm import tqdm
 from .model import data_dir, output_dir, load_metric, load_deberta_model, load_and_prepare_dataset
@@ -25,9 +21,11 @@ peft_config = LoraConfig(
     lora_alpha=16,
     task_type=TaskType.SEQ_CLS,
     inference_mode=False,
-    #target_modules=["deberta.encoder.layer.*.attention.self.query_proj", "deberta.encoder.layer.*.attention.self.key_proj", "deberta.encoder.layer.*.attention.self.value_proj"],
     lora_dropout=0.1,
-    # bias="none",
+
+    # Essential for deBERTa since it does not have a pretrained pooler layer.
+    # https://github.com/huggingface/peft/issues/2171#issuecomment-2431727061
+    modules_to_save=["classifier", "pooler"],
 )
 
 # Base model and tokenizer
@@ -37,6 +35,7 @@ model, tokenizer = load_deberta_model()
 print("Applying LoRA to DeBERTa model...")
 model = get_peft_model(model, peft_config)
 model.print_trainable_parameters()
+model.compile()
 
 # Dataloader shorthand
 print("Loading and preparing dataset...")

@@ -15,7 +15,7 @@ model = PeftModel.from_pretrained(deberta_model, lora_model_dir)
 model.eval()
 
 # Use GPU
-device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
+device = "cuda" if torch.cuda.is_available() else "cpu"
 model.to(device)
 
 # Define a function to process and evaluate text
@@ -27,14 +27,13 @@ def evaluate_text(text):
     outputs = model(**inputs)
     logits = outputs.logits
 
-    # Apply softmax to get probabilities
     probabilities = softmax(logits, dim=-1)
+    # predictions = torch.argmax(logits, dim=-1)
+    # return predictions.cpu().numpy()
+    # return logits
 
-    # Get the predicted class and confidence score
-    predicted_class = torch.argmax(probabilities, dim=-1).item()
-    confidence_score = probabilities[0, predicted_class].item()
 
-    return predicted_class, confidence_score
+    #return predicted_class, confidence_score
 
 
 # A simple REPL for text input
@@ -59,11 +58,13 @@ def repl():
 
     # Join the input lines and evaluate the text
     text = "\n".join(input_lines)
-    predicted_class, confidence_score = evaluate_text(text)
+    predictions = evaluate_text(text)
+    print(predictions)
 
     # Print the prediction result
-    print(f"\nPredicted class: {predicted_class}, Confidence score: {confidence_score:.4f}")
+    #print(f"\nPredicted class: {predicted_class}, Confidence score: {confidence_score:.4f}")
 
 if __name__ == "__main__":
   repl()
+
 

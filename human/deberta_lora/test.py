@@ -5,19 +5,17 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
 from .model import load_and_prepare_dataset, data_dir, load_deberta_model, output_dir
 from peft import PeftModel, PeftConfig
 
-lora_model_dir = f"{output_dir}/lora_epoch_1"
+lora_model_dir = f"{output_dir}/lora_epoch_3"
 
 # Load the pre-trained model
 model, tokenizer = load_deberta_model()
 
 # Load the LoRA model
-#model = AutoPeftModel.from_pretrained(f"{output_dir}/lora_epoch_1")
-#load_peft_model(deberta_model, f"{output_dir}/lora_epoch_1")
 model = PeftModel.from_pretrained(model, lora_model_dir)
 model.eval()
 
 # Compile the model
-model.compile()
+#model.compile()
 
 # Load the dataset and tokenize
 eval_dataloader = load_and_prepare_dataset(f'{data_dir}/test.csv', tokenizer, batch_size=4)

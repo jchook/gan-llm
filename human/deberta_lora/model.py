@@ -36,11 +36,20 @@ def get_deberta_lora(deberta_model, lora_config = default_lora_config):
   model = get_peft_model(deberta_model, lora_config)
   return model
 
+
+def clean_text_data(input: str):
+  """
+  Clean text data by removing special characters and extra spaces
+  """
+  return ' '.join(input.split())
+
+
 def load_and_prepare_dataset(data_file, tokenizer, batch_size):
   """
   Helper function to load and prepare a CSV dataset for training or testing
   """
   def tokenize_fn(examples):
+    examples['essay'] = [clean_text_data(essay) for essay in examples['essay']]
     return tokenizer(examples['essay'], truncation=True, padding='max_length', max_length=512)
   dataset = load_dataset('csv', data_files={'train': data_file})
   # dataset['train'] = dataset['train'].select(range(2000))
