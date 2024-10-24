@@ -15,8 +15,8 @@ Example API URL: https://hacker-news.firebaseio.com/v0/item/4388729.json?print=p
 See [fetch.sh](./fetch.sh).
 
 
-Data Cut-Off
-------------
+Data Timeframe
+--------------
 
 We are only interested in pre-2022 data (around ID 30000000).
 
@@ -24,11 +24,39 @@ GPT etc became widely used and available after that time. See [Wordfreq
 SUNSET.md](https://github.com/rspeer/wordfreq/blob/master/SUNSET.md) for an
 expert opinion on this topic.
 
-We'll arbitrarily use a post in August 2012 as the start ID (4380000). That's
+We could use a post in August 2012 as the start ID (4380000). That's
 when I signed-up for Hacker News and started reading it on a daily basis, and
 I imagine it started to get a lot more popular around that time.
 
 Between these "goal posts", we have 25,620,000 items to fetch.
+
+Roughly 5% of the items will be usable, so that would yield over 1 million
+usable examples. That's far more than we need. Also, the HN comments of 2012
+have a certain "exclusive hacker" vibe that I think softens over the years.
+
+If we target roughly 50k usable posts, that means we need a window of 1 million
+items, or 1/25th of the window we have selected. Since 2020-2022 are innundated
+with arguments about COVID, I would prefer to steer clear of that timeframe.
+
+Item 20000000 to 22000000, that gives us May 2019 to January 2020, and doubles
+the total items we estimate will be needed. That timeframe seems good for this
+task.
+
+
+Observations
+------------
+
+HN comments do not close their <p> tags. They simply separate paragraphs with
+`<p>` as if it were an HTML5 `<br><br>`
+
+A surprising number of users double-space between sentences. Should this be
+removed to avoid teaching the machine that double-spacing = human?
+
+At some point some of the HTML entity encodings switched from numeric to common
+names. For example, `&#62;` became `&gt;`.
+
+The HTML encoding seems clean enough that I believe we can strip tags with
+a simple `re.sub('<[^<]+?>', '', text)` after replacing `<p>` with `\n\n`.
 
 
 Other Sources
@@ -49,9 +77,33 @@ Quasi-related but not useful for this task:
 Rewriting with AI
 -----------------
 
-Here are some example prompts I am considering for instructing Llama 3.2 or ChatGPT 4o to rewrite the human-written comments.
+After a few iterations, it seems that cycling through numerous different
+prompts could produce a wider variety of machine-generated output. For example,
+prompts should include/exclude various features such as:
 
-> Rewrite this Hacker News comment in your own words. Try to sound as human as possible and capture all of the essence and style of the comment without plagiarizing it. Do not write "In conclusion". Do not add a preamble or post text; only output the rewritten comment.
+- Double-space between sentences
+- Include a couple innocuous spelling mistakes to make it seem more natural
+- Use all lowercase
+- Capture the writing style of the original author
+
+
+All prompts should include some minimum guards against common AI output junk:
+
+- Do not include a preamble or post-text. Only output the rewritten [comment|essay|whatever].
+- Do not write "In conclusion"
+- Do not plagiarize the content
+
+Balancing the dataset between human and machine written examples makes a lot of
+common problems with training a detection AI more apparent, so a 50/50 split
+tends to be a good target.
+
+Here are some example prompts I am considering for instructing Llama 3.2 or
+ChatGPT 4o to rewrite the human-written comments.
+
+> Rewrite this Hacker News comment in your own words. Try to sound as human as
+> possible and capture all of the essence and style of the comment without
+> plagiarizing it. Do not write "In conclusion". Do not add a preamble or post
+> text; only output the rewritten comment.
 
 
 Resources

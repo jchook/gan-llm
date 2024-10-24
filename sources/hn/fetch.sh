@@ -1,13 +1,14 @@
 #!/bin/bash
 
-START_ID=4380000 # August 2012, when I signed-up for HN
-FINAL_ID=30000000 # January 2022, the end of reliable human-generated text
+START_ID=20000000 # May 2019
+FINAL_ID=22000000 # January 2020
+OUT_FILE="data/data.json"
 
 set -e
 
 # Resume from the last ID fetched
-if [ -f data.json ]; then
-  START_ID="$(tail -n 1 data.json | jq '.id')"
+if [ -f "$OUT_FILE" ]; then
+  START_ID="$(tail -n 1 "$OUT_FILE" | jq '.id')"
   let START_ID=START_ID+1
 fi
 
@@ -17,8 +18,8 @@ BASE_URL="https://hacker-news.firebaseio.com/v0/item"
 
 # Fetch the data
 while [ $START_ID -le $FINAL_ID ]; do
-  curl --no-progress-meter "$BASE_URL/$START_ID.json" | tee -a data.json
-  echo "" >> data.json
+  curl --no-progress-meter "$BASE_URL/$START_ID.json" | tee -a "$OUT_FILE"
+  echo "" >> "$OUT_FILE"
   let START_ID=START_ID+1
 done
 
