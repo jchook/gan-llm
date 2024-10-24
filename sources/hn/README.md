@@ -10,6 +10,8 @@ Everything is an "item" (polls, stories, comments, etc). Items appear to have
 sequential IDs, and are all accessible from the same endpoint. So it becomes
 possible to simply iterate through each item and save it out to a JSONL file.
 
+Example API URL: https://hacker-news.firebaseio.com/v0/item/4388729.json?print=pretty
+
 See [fetch.sh](./fetch.sh).
 
 
@@ -38,6 +40,18 @@ Other folks have already scraped HN and provided datasets.
 - https://huggingface.co/datasets/OpenPipe/best-hn-comment-pairs-v2 - 36k rows of selected comments
 - https://github.com/sytelus/HackerNewsData - old, only to 2014
 - https://huggingface.co/datasets/jkeisling/hacker-news-corpus-2007-2022
+
+Quasi-related but not useful for this task:
+
+- https://huggingface.co/datasets/julien040/hacker-news-posts - might help you predict whether a post would be successful
+
+
+Rewriting with AI
+-----------------
+
+Here are some example prompts I am considering for instructing Llama 3.2 or ChatGPT 4o to rewrite the human-written comments.
+
+> Rewrite this Hacker News comment in your own words. Try to sound as human as possible and capture all of the essence and style of the comment without plagiarizing it. Do not write "In conclusion". Do not add a preamble or post text; only output the rewritten comment.
 
 
 Resources
