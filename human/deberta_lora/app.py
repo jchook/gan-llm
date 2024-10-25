@@ -7,6 +7,10 @@ from .model import load_deberta_model, output_dir
 lora_model_dir = f"{output_dir}/lora_epoch_3"
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
+# This was trained with train_temperature.py
+# This quotient scales the logits down to prevent over-confidence.
+T = 1.602027177810669
+
 # Load the pre-trained model
 model, tokenizer = load_deberta_model()
 
@@ -22,8 +26,9 @@ def classify_text(text):
     inputs = tokenizer(text, return_tensors="pt", truncation=True, padding='max_length', max_length=512)
     inputs.to(device)
     outputs = model(**inputs)
-    predicted_class = outputs.logits.argmax(dim=-1).item()
-    confidence_score = outputs.logits.softmax(dim=-1)[0, predicted_class].item()
+    logits = outputs.logits / T
+    predicted_class = logits.argmax(dim=-1).item()
+    confidence_score = logits.softmax(dim=-1)[0, predicted_class].item()
     return f"Predicted Class: {class_to_label[predicted_class]}, Confidence: {confidence_score:.4f}"
 
 # Define Gradio interface
