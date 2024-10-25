@@ -8,9 +8,10 @@ lora_model_dir = f"{output_dir}/lora_epoch_1"
 # Load the pre-trained model
 deberta_model, tokenizer = load_deberta_model()
 
+# This was trained with train_temperature.py
+T = 1.602027177810669
+
 # Load the LoRA model
-#model = AutoPeftModel.from_pretrained(f"{output_dir}/lora_epoch_1")
-#load_peft_model(deberta_model, f"{output_dir}/lora_epoch_1")
 model = PeftModel.from_pretrained(deberta_model, lora_model_dir)
 model.eval()
 
@@ -25,15 +26,11 @@ def evaluate_text(text):
 
   with torch.no_grad():
     outputs = model(**inputs)
-    logits = outputs.logits
-
-    probabilities = softmax(logits, dim=-1)
-    # predictions = torch.argmax(logits, dim=-1)
-    # return predictions.cpu().numpy()
-    # return logits
-
-
-    #return predicted_class, confidence_score
+    logits = outputs.logits / T
+    probs = softmax(logits, dim=-1)
+    predicted_class = torch.argmax(probs, dim=-1).item()
+    confidence_score = probs[0][predicted_class].item()
+    return predicted_class, confidence_score
 
 
 # A simple REPL for text input
@@ -58,11 +55,10 @@ def repl():
 
     # Join the input lines and evaluate the text
     text = "\n".join(input_lines)
-    predictions = evaluate_text(text)
-    print(predictions)
+    predicted_class, confidence_score = evaluate_text(text)
 
     # Print the prediction result
-    #print(f"\nPredicted class: {predicted_class}, Confidence score: {confidence_score:.4f}")
+    print(f"\nPredicted class: {predicted_class}, Confidence score: {confidence_score:.4f}")
 
 if __name__ == "__main__":
   repl()
