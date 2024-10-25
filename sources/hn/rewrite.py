@@ -8,26 +8,31 @@ from tqdm import tqdm
 api_url = "http://localhost:11434/api/generate"
 
 # Data files
-input_csv_file = 'sources/essays/essays.csv'
-output_csv_file = 'sources/essays/rewritten_essays.csv'
+input_csv_file = 'sources/hn/data/01-human.csv'
+output_csv_file = 'sources/hn/data/01-machine.csv'
 
-# Define the prompt prefix for rewriting essays
+
+# Define the prompt prefix for rewriting text
 prompt_prefix = (
-    "Completely rewrite this essay in your own words. Do not plaigairize it. "
-    "Only output your version of the essay. "
-    "Do not make any footnotes or comments about it."
+    "Rewrite this Hacker News comment in your own words. "
+    "Do not plaigairize it. "
+    "Only output your rewritten version of the supplied text. "
+    "Do not add any extraneous preamble, footnotes, etc about it. "
+    "Keep in mind that folks on Hacker News use the '>' prefix to quote other comments. "
+    "Rewrite the quoted comment portions in the same manner as the comment itself. "
+    "Okay, here is the original comment to rewrite: \n\n"
 )
 
 # Custom exception for rewriting errors
 class RewritingError(Exception):
     pass
 
-# Rewrite the essays using the Ollama API
-def rewrite_essay(essay_text, model_name="llama3.2"):
+# Rewrite the comments using the Ollama API
+def rewrite_essay(text, model_name="llama3.2"):
     headers = { 'Content-Type': 'application/json' }
     payload = json.dumps({
         "model": model_name,
-        "prompt": f"{prompt_prefix} {essay_text}",
+        "prompt": f"{prompt_prefix}{text}",
         "stream": False
     })
     response = requests.post(api_url, data=payload, headers=headers)
@@ -36,16 +41,16 @@ def rewrite_essay(essay_text, model_name="llama3.2"):
     else:
         raise RewritingError(f"Error: {response.status_code}, {response.text}")
 
-# Load the cleaned essays
-essays = pd.read_csv(input_csv_file)
+# Load the cleaned data
+data = pd.read_csv(input_csv_file)
 
 # Open the file in append mode once
 with open(output_csv_file, 'a', newline='') as f:
-    rows = essays.iterrows()
+    rows = data.iterrows()
     if os.stat(output_csv_file).st_size == 0:
         # Write the header row only if the file is empty
         print("New CSV file. Writing the header row...")
-        f.write("essay_id,essay,origin\n")
+        f.write("id,text,label\n")
         num_rows_written = 0
     else:
         # To resume rewriting (since this is a time-intensive task),
@@ -64,24 +69,25 @@ with open(output_csv_file, 'a', newline='') as f:
 
 
     # Calculate the total number of rows to be written
-    total_rows = len(essays) - num_rows_written
+    total_rows = len(data) - num_rows_written
 
     # Create a CSV writer object and progressively append rows
-    for index, row in tqdm(rows, total=total_rows, desc="Rewriting Essays"):
+    for index, row in tqdm(rows, total=total_rows, desc="Rewriting data"):
 
         # Extract the essay ID and text
-        essay_id = row['essay_id']
-        essay_text = row['essay']
+        id = row['id']
+        text = row['text']
 
         # Rewrite the essay
-        rewritten_text = rewrite_essay(essay_text)
+        rewritten_text = rewrite_essay(text)
 
         # Create a DataFrame for the current row
         df = pd.DataFrame({
-            'essay_id': [essay_id],
-            'essay': [rewritten_text],
-            'origin': [1],
+            'id': [id],
+            'text': [rewritten_text],
+            'label': [1],
         })
 
         # Append the DataFrame to the already-opened file
         df.to_csv(f, mode='a', header=False, index=False)
+

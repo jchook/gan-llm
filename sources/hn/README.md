@@ -10,7 +10,8 @@ Everything is an "item" (polls, stories, comments, etc). Items appear to have
 sequential IDs, and are all accessible from the same endpoint. So it becomes
 possible to simply iterate through each item and save it out to a JSONL file.
 
-Example API URL: https://hacker-news.firebaseio.com/v0/item/4388729.json?print=pretty
+Example API URL:
+https://hacker-news.firebaseio.com/v0/item/4388729.json?print=pretty
 
 See [fetch.sh](./fetch.sh).
 
@@ -53,7 +54,7 @@ A surprising number of users double-space between sentences. Should this be
 removed to avoid teaching the machine that double-spacing = human?
 
 At some point some of the HTML entity encodings switched from numeric to common
-names. For example, `&#62;` became `&gt;`.
+names. For example, `&#62;` became `&gt;`. Use `html.unescape()`.
 
 The HTML encoding seems clean enough that I believe we can strip tags with
 a simple `re.sub('<[^<]+?>', '', text)` after replacing `<p>` with `\n\n`.

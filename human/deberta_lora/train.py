@@ -62,6 +62,7 @@ model.to(device)
 
 # Training loop
 print("Starting training loop...")
+smoothed_accuracy = []
 for epoch in range(num_epochs):
     model.train()
     for step, batch in enumerate(tqdm(train_dataloader)):
@@ -72,6 +73,16 @@ for epoch in range(num_epochs):
         optimizer.step()
         lr_scheduler.step()
         optimizer.zero_grad()
+
+        # Compute accuracy
+        logits = outputs.logits
+        predictions = torch.argmax(logits, dim=-1)
+        accuracy = (predictions == batch["labels"]).float().mean().item()
+        smoothed_accuracy.append(accuracy)
+        if len(smoothed_accuracy) > 100:
+            smoothed_accuracy.pop(0)
+        if step % 100 == 0:
+            print(f"epoch {epoch}, step {step}: accuracy={sum(smoothed_accuracy) / len(smoothed_accuracy)}")
 
     model.eval()
     for step, batch in enumerate(tqdm(eval_dataloader)):

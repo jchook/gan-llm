@@ -5,7 +5,7 @@ from torch.utils.data import DataLoader
 import evaluate
 
 base_dir = 'human/deberta_lora'
-data_dir = 'human/data'
+data_dir = 'sources/hn/data/01'
 output_dir = f'{base_dir}/output'
 pretrained_model_name_or_path = 'microsoft/deberta-v3-base'
 batch_size = 4
@@ -49,8 +49,8 @@ def load_and_prepare_dataset(data_file, tokenizer, batch_size):
   Helper function to load and prepare a CSV dataset for training or testing
   """
   def tokenize_fn(examples):
-    examples['essay'] = [clean_text_data(essay) for essay in examples['essay']]
-    return tokenizer(examples['essay'], truncation=True, padding='max_length', max_length=512)
+    examples['text'] = [clean_text_data(text) for text in examples['text']]
+    return tokenizer(examples['text'], truncation=True, padding='max_length', max_length=512)
   dataset = load_dataset('csv', data_files={'train': data_file})
   # dataset['train'] = dataset['train'].select(range(2000))
   tokenized_datasets = dataset.map(tokenize_fn, batched=True)
