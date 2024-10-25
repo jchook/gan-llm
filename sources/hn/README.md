@@ -19,27 +19,28 @@ See [fetch.sh](./fetch.sh).
 Data Timeframe
 --------------
 
-We are only interested in pre-2022 data (around ID 30000000).
-
-GPT etc became widely used and available after that time. See [Wordfreq
+We are only interested in pre-2022 data (around ID 30000000). GPT etc became
+widely used and available after that time. See [Wordfreq
 SUNSET.md](https://github.com/rspeer/wordfreq/blob/master/SUNSET.md) for an
 expert opinion on this topic.
 
-We could use a post in August 2012 as the start ID (4380000). That's
-when I signed-up for Hacker News and started reading it on a daily basis, and
-I imagine it started to get a lot more popular around that time.
+So which range of posts should we scrape?
 
-Between these "goal posts", we have 25,620,000 items to fetch.
+We could use a post in August 2012 as the start ID (4380000). That's when
+I signed-up for Hacker News and started reading it on a daily basis, and
+I imagine it started to get a lot more popular around that time. However, this
+large time range (2012-2022) yields 25,620,000 "items" to fetch.
 
-Roughly 5% of the items will be usable, so that would yield over 1 million
-usable examples. That's far more than we need. Also, the HN comments of 2012
-have a certain "exclusive hacker" vibe that I think softens over the years.
+If we estimate roughly 5% of the items will be usable, that would yield over
+1 million usable examples. That's far more than we need. Also, the HN comments
+of 2012 have a certain "exclusive hacker" vibe that I think softens over the
+years, making later comments more broad in topic and flavor.
 
-If we target roughly 50k usable posts, that means we need a window of 1 million
-items, or 1/25th of the window we have selected. Since 2020-2022 are innundated
-with arguments about COVID, I would prefer to steer clear of that timeframe.
+Targeting roughly 50k usable posts, we will need a window of 1 million items.
+Since 2020-2022 are innundated with arguments about COVID, I would prefer to
+steer clear of that timeframe entirely.
 
-Item 20000000 to 22000000, that gives us May 2019 to January 2020, and doubles
+Item ID 20000000 to 22000000 gives us May 2019 to January 2020, and doubles
 the total items we estimate will be needed. That timeframe seems good for this
 task.
 
