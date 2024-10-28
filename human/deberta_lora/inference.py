@@ -1,18 +1,18 @@
 import torch
-from .model import load_deberta_model, output_dir
+from .model import load_base_model, output_dir, temperature_scale
 from torch.nn.functional import softmax
 from peft import PeftModel, PeftConfig
 
 lora_model_dir = f"{output_dir}/lora_epoch_1"
 
 # Load the pre-trained model
-deberta_model, tokenizer = load_deberta_model()
+base_model, tokenizer = load_base_model()
 
-# This was trained with train_temperature.py
-T = 1.602027177810669
+# This quotient scales the logits down to prevent over-confidence.
+T = temperature_scale
 
 # Load the LoRA model
-model = PeftModel.from_pretrained(deberta_model, lora_model_dir)
+model = PeftModel.from_pretrained(base_model, lora_model_dir)
 model.eval()
 
 # Use GPU

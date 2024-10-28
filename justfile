@@ -1,7 +1,7 @@
-essays.rewrite:
+essays-rewrite:
   python -m sources.essays.rewrite
 
-essays.split:
+essays-split:
   python -m sources.essays.split
 
 lab:

@@ -7,7 +7,8 @@ from peft import (
 )
 from transformers import get_linear_schedule_with_warmup
 from tqdm import tqdm
-from .model import data_dir, output_dir, load_metric, load_deberta_model, load_and_prepare_dataset
+from .model import data_dir, output_dir, load_base_model, load_and_prepare_dataset
+from .evaluate import load_metric
 
 # Hyperparameters
 batch_size = 4
@@ -30,7 +31,7 @@ peft_config = LoraConfig(
 
 # Base model and tokenizer
 print("Loading DeBERTa model...")
-model, tokenizer = load_deberta_model()
+model, tokenizer = load_base_model()
 
 print("Applying LoRA to DeBERTa model...")
 model = get_peft_model(model, peft_config)
@@ -90,15 +91,11 @@ for epoch in range(num_epochs):
         with torch.no_grad():
             outputs = model(**batch)
         predictions = outputs.logits.argmax(dim=-1)
-        predictions, references = predictions, batch["labels"]
-        metric.add_batch(predictions=predictions, references=references)
+        metric.add_batch(predictions=predictions, references=batch["labels"])
 
     # Compute and print metrics
     eval_metric = metric.compute()
     print(f"epoch {epoch}:", eval_metric)
-
-    # Reset the metric after each epoch
-    #metric.reset()
 
     # Save the model after each epoch
     model.save_pretrained(f"{output_dir}/lora_epoch_{epoch+1}")

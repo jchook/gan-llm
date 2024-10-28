@@ -1,18 +1,16 @@
 import torch
 import gradio as gr
-from transformers import AutoModelForSequenceClassification, AutoTokenizer
 from peft import PeftModel
-from .model import load_deberta_model, output_dir
+from .model import load_base_model, output_dir, temperature_scale
 
 lora_model_dir = f"{output_dir}/lora_epoch_3"
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
-# This was trained with train_temperature.py
 # This quotient scales the logits down to prevent over-confidence.
-T = 1.602027177810669
+T = temperature_scale
 
 # Load the pre-trained model
-model, tokenizer = load_deberta_model()
+model, tokenizer = load_base_model()
 
 # Load the LoRA model
 model = PeftModel.from_pretrained(model, lora_model_dir)

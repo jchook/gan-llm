@@ -48,17 +48,16 @@ task.
 Observations
 ------------
 
-HN comments do not close their <p> tags. They simply separate paragraphs with
-`<p>` as if it were an HTML5 `<br><br>`
+HN comments do not close `<p>` tags. They simply separate paragraphs with `<p>`
+as if it were `<br><br>`.
 
-A surprising number of users double-space between sentences. Should this be
-removed to avoid teaching the machine that double-spacing = human?
+A surprising number of commenters add a double-space between sentences.
 
 At some point some of the HTML entity encodings switched from numeric to common
-names. For example, `&#62;` became `&gt;`. Use `html.unescape()`.
+names. For example, `&#62;` became `&gt;`.
 
-The HTML encoding seems clean enough that I believe we can strip tags with
-a simple `re.sub('<[^<]+?>', '', text)` after replacing `<p>` with `\n\n`.
+The HTML encoding seems clean enough that one can confidently strip HTML tags
+with a simple `re.sub('<[^<]+?>', '', text)` after replacing `<p>` with `\n\n`.
 
 
 Other Sources
@@ -88,7 +87,6 @@ prompts should include/exclude various features such as:
 - Use all lowercase
 - Capture the writing style of the original author
 
-
 All prompts should include some minimum guards against common AI output junk:
 
 - Do not include a preamble or post-text. Only output the rewritten [comment|essay|whatever].
@@ -99,6 +97,10 @@ Balancing the dataset between human and machine written examples makes a lot of
 common problems with training a detection AI more apparent, so a 50/50 split
 tends to be a good target.
 
+Ideally the process will use a variety of LLMs to generate the
+machine-generated examples, including cutting-edge commercial models like
+ChatGPT 4o, Claude, and Grok.
+
 Here are some example prompts I am considering for instructing Llama 3.2 or
 ChatGPT 4o to rewrite the human-written comments.
 
@@ -106,6 +108,54 @@ ChatGPT 4o to rewrite the human-written comments.
 > possible and capture all of the essence and style of the comment without
 > plagiarizing it. Do not write "In conclusion". Do not add a preamble or post
 > text; only output the rewritten comment.
+
+> Rewrite this Hacker News comment in your own words. Try to preserve the
+> author's writing style and essence without plagiarizing it or keeping the
+> exact same word choice. Try to mimic any of the author's typing quirks such
+> as innocuous misspellings, spacing, punctuation preferences, etc. Only output
+> the rewritten comment.
+
+---
+
+Here we can see some as a system prompt rather than a user prompt:
+
+> Assume the role of Hacker News comment rewriter. Rewrite Hacker News comments
+> in your own words. Try to preserve the author's writing style and essence
+> without plagiarizing it or keeping the same word choice. Try to occasionally
+> mimic the author's typing quirks such as innocuous misspellings, spacing,
+> punctuation preferences, etc., but do not copy the comment structure exactly.
+> Only output the rewritten comment.
+
+---
+
+The next one emits output that kinda freakily sounds like a human. However, it
+relies heavily on real human input. It highlights (lol) two key but different
+use cases of this overall project: detecting AI-generated works vs AI-processed
+works.
+
+In the case of AI-generated works, human content may not be directly available
+to guide the AI into writing like a human. In the AI-processed case, it will be
+available. However, it seems most AI-processed work would like to benefit from
+a stronger rewrite of the original data to make it sound more correct,
+professional, succinct, accurate, well-written, etc.
+
+> Assume the role of Hacker News comment rewriter. Rewrite Hacker News comments
+> in your own words. Try to preserve the author's writing style and essence
+> without plagiarizing it or keeping the same word choice. Try to mimic any of
+> the author's typing quirks such as innocuous misspellings, spacing,
+> punctuation preferences, etc. Only output the rewritten comment.
+
+---
+
+This one creates very AI-esque output, presumably because it doesn't have any
+real human text to work from. This might be a good strategy for the GAN arch.
+
+> Assume the role of a Hacker News discussion user. Reply intelligently to the
+> provided comment in the style of a Hacker News comment section. Do not copy
+> the provided comment at all, buttry to sound as real and human as possible.
+> Reply using approximately as many words as the provided comment, with an
+> original thought that directly addresses the provided comment. Only output
+> the reply to the comment.
 
 
 Resources
