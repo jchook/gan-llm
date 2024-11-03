@@ -139,11 +139,53 @@ available. However, it seems most AI-processed work would like to benefit from
 a stronger rewrite of the original data to make it sound more correct,
 professional, succinct, accurate, well-written, etc.
 
-> Assume the role of Hacker News comment rewriter. Rewrite Hacker News comments
+> Assume the role of Hacker News comment rewriter. Completely rewrite Hacker News comments
 > in your own words. Try to preserve the author's writing style and essence
 > without plagiarizing it or keeping the same word choice. Try to mimic any of
 > the author's typing quirks such as innocuous misspellings, spacing,
 > punctuation preferences, etc. Only output the rewritten comment.
+
+Here is a slightly imroved version of this:
+
+> Assume the role of Hacker News comment rewriter. Rewrite this Hacker News
+> comment in your own words. Try to preserve the author's writing style and
+> essence without plagiarizing it or keeping the exact same word choice. Try to
+> capture the author's writing quirks such as innocuous misspellings, spacing,
+> punctuation preferences, sentence structure, mood, formality/informality,
+> attitude, etc. Only output the rewritten comment. Here is the comment to
+> rewrite:
+
+---
+
+Here is one that ChatGPT came up with. It doesn't seem to perform as well,
+especially since it causes the output to have typical AI-like punctuation.
+
+> Rewrite the following text, preserving its unique feel and personality without using the exact words or phrasing. Focus on capturing the writer’s *voice* and *expressiveness* so that the rewritten text still feels like it could have been written by them.
+>
+> Pay close attention to:
+> 1. **Cadence and Rhythm**: Keep the pacing and flow of sentences similar, reflecting whether the writing has a quick, choppy style or a more measured, flowing one.
+> 2. **Syntax Patterns**: Emulate the arrangement of phrases and clauses; if the writer tends toward complex structures, reflect that complexity, or if they prefer simplicity, echo that instead.
+> 3. **Register and Diction Choices**: Match the level of formality or informality, from conversational to technical. Capture any preference for certain types of words, like straightforward vocabulary or more nuanced, descriptive language.
+> 4. **Colloquialism and Phrasing Style**: Use conversational language or idioms where they appear, and incorporate similar expressions or descriptors while avoiding direct copies.
+> 5. **Structural Emphasis**: Keep any unique use of punctuation—such as ellipses, em-dashes, or italics—that creates emphasis and rhythm, and try to use similar patterns to preserve the emotional weight of each point.
+> 6. **Conciseness or Verbosity**: Match how much detail the writer includes, whether they’re concise or enjoy tangents and asides.
+> 7. **Nuance and Implication**: Emulate how the writer hints at meaning, whether they are understated or direct, humorous or serious, playful or detached.
+>
+> Your goal is to recreate the *essence*, *tone*, and *mood* of the original while generating fresh language. Use these aspects to craft a new version that is legally distinct but carries the same personality and intention.
+
+
+---
+
+And combining them:
+
+> Assume the role of Hacker News comment rewriter. Rewrite this Hacker News
+> comment. Try to preserve the author's writing style and essence without
+> plagiarizing it or keeping the exact same word choice. Try to capture the
+> author's writing quirks such as innocuous misspellings, spacing, punctuation
+> preferences, sentence structure, mood, formality/informality, attitude,
+> cadence, rhythm, register, nuance/implication, verbosity (or lack thereof),
+> etc. Only output the rewritten comment. Here is the comment to rewrite:
+
 
 ---
 
